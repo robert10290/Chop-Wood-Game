@@ -1,9 +1,15 @@
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class Main {
-    public static void main(String[] args) throws IOException {
+import static java.awt.event.KeyEvent.VK_G;
 
+public class Main {
+
+    public static void main(String[] args) throws IOException {
+        Init.start(); //initialize objects
         System.out.println("Hello in da Game!");
         System.out.println("Name of a player:");
         Scanner scanner = new Scanner(System.in);
@@ -24,6 +30,7 @@ public class Main {
             System.out.println("3. Shop");
             System.out.println("4. Show equipment");
             System.out.println("quit: exit game");
+            //action=String.valueOf(System.in.read());
             action=scanner.nextLine();
             switch (action) {
                 case "1":

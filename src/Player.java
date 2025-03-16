@@ -18,7 +18,7 @@ public class Player {
         setPower(1);
         setExperience(0);
         updateLevel();
-        setMoney(10);
+        setMoney(30);
         equipment = new ArrayList<>();
     }
 
@@ -141,10 +141,12 @@ public class Player {
     public boolean findItem(String nameId) {
         if(equipment.isEmpty()) return false;
         Iterator<Item> itemIterator = equipment.iterator();
+        String itemId;
         do {
-            return itemIterator.next().getNameId().equalsIgnoreCase(nameId);
+            if(itemIterator.next().getNameId().equalsIgnoreCase(nameId)) return true;
         }
         while (itemIterator.hasNext());
+        return false;
 
     }
 }
