@@ -18,7 +18,7 @@ public class Player {
         setPower(1);
         setExperience(0);
         updateLevel();
-        setMoney(30);
+        setMoney(3000);
         equipment = new ArrayList<>();
     }
 
