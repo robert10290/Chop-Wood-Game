@@ -1,14 +1,8 @@
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.IOException;
 import java.util.Scanner;
-
-import static java.awt.event.KeyEvent.VK_G;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Init.start(); //initialize objects
         System.out.println("Hello in da Game!");
         System.out.println("Name of a player:");
@@ -29,6 +23,7 @@ public class Main {
             System.out.println("2. Sell wood");
             System.out.println("3. Shop");
             System.out.println("4. Show equipment");
+            System.out.println("5. Coin Throw Game");
             System.out.println("quit: exit game");
             //action=String.valueOf(System.in.read());
             action=scanner.nextLine();
@@ -45,6 +40,10 @@ public class Main {
                     break;
                 case "4":
                     player.showEquipment();
+                    break;
+                case "5":
+                    player.coinFlipGame(player);
+                    break;
             }
         }
         scanner.close();

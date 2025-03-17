@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Player {
     private String name;
@@ -22,14 +19,14 @@ public class Player {
         equipment = new ArrayList<>();
     }
 
-    public void showEquipment(){
-        if(equipment.isEmpty()) System.out.println("Equipment: [empty]");
+    public void showEquipment() {
+        if (equipment.isEmpty()) System.out.println("Equipment: [empty]");
         else {
             Iterator<Item> itemIterator = equipment.iterator();
             System.out.print("Equipment: [ ");
             do {
                 System.out.print(itemIterator.next().getNameItem());
-                if(itemIterator.hasNext()) System.out.print(", ");
+                if (itemIterator.hasNext()) System.out.print(", ");
             }
             while (itemIterator.hasNext());
             System.out.println(" ]");
@@ -51,10 +48,10 @@ public class Player {
 
     //level update based on experience amount
     public int updateLevel() {
-        int i=1;
-        while(true) {
-            if(experience<1000*i){
-                level=i;
+        int i = 1;
+        while (true) {
+            if (experience < 1000 * i) {
+                level = i;
                 return level;
             }
             i++;
@@ -64,10 +61,10 @@ public class Player {
     public void setExperience(int experience) {
         this.experience = experience;
     }
-    
+
     public void addExperience(int exp) {
-        experience+=exp;
-        if(level<updateLevel()) System.out.println("Promoted to level "+level);
+        experience += exp;
+        if (level < updateLevel()) System.out.println("Promoted to level " + level);
     }
 
     public int getPower() {
@@ -99,7 +96,7 @@ public class Player {
     }
 
     public void addWoodAmount(int woodAmount) {
-        this.woodAmount+=woodAmount;
+        this.woodAmount += woodAmount;
     }
 
     public void addMoney(int money) {
@@ -113,10 +110,10 @@ public class Player {
     public int makeWood() {
         Random random = new Random();
         //int wood = (int)(Math.*(level+1)*getPower());
-        int wood = (int)((random.nextInt(2))+(0.5* random.nextInt(level+power)));
-        if(wood>0) {
-            int gainedExp = (int)(Math.random()*20+wood);
-            System.out.println("Gained " +gainedExp+" exp points.");
+        int wood = (int) ((random.nextInt(2)) + (0.5 * random.nextInt(level + power)));
+        if (wood > 0) {
+            int gainedExp = (int) (Math.random() * 20 + wood);
+            System.out.println("Gained " + gainedExp + " exp points.");
             addExperience(gainedExp);
             addWoodAmount(wood);
         }
@@ -124,14 +121,13 @@ public class Player {
     }
 
     public void sellWood() {
-        if((getWoodAmount()/10)>0) {
-            int soldAmountOfWood = (getWoodAmount()/10)*10;
-            int addedMoney = (getWoodAmount()/10);
+        if ((getWoodAmount() / 10) > 0) {
+            int soldAmountOfWood = (getWoodAmount() / 10) * 10;
+            int addedMoney = (getWoodAmount() / 10);
             money += addedMoney;
-            woodAmount = getWoodAmount()%10;
-            System.out.println("Sold "+soldAmountOfWood+" wood. Added money: "+addedMoney);
-        }
-        else System.out.println("Cannot sell wood.");
+            woodAmount = getWoodAmount() % 10;
+            System.out.println("Sold " + soldAmountOfWood + " wood. Added money: " + addedMoney);
+        } else System.out.println("Cannot sell wood.");
     }
 
     public void addItemToEquipment(Item item) {
@@ -139,14 +135,42 @@ public class Player {
     }
 
     public boolean findItem(String nameId) {
-        if(equipment.isEmpty()) return false;
+        if (equipment.isEmpty()) return false;
         Iterator<Item> itemIterator = equipment.iterator();
         String itemId;
         do {
-            if(itemIterator.next().getNameId().equalsIgnoreCase(nameId)) return true;
+            if (itemIterator.next().getNameId().equalsIgnoreCase(nameId)) return true;
         }
         while (itemIterator.hasNext());
         return false;
+
+    }
+
+    public void coinFlipGame(Player player) {
+        Random random = new Random();
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Type money amount: ");
+        int money = scanner.nextInt();
+        if (String.valueOf(money).equalsIgnoreCase("0")) return;
+        else if (money > 0 && money <= player.money) {
+            System.out.println("Please take your choice:");
+            System.out.println("1. Heads");
+            System.out.println("2. Tails");
+            int choice = scanner.nextInt();
+            int result = Math.abs(random.nextInt() % 2) + 1;
+            System.out.println("Coinflip result:");
+            if(result==1) System.out.println("1. Heads");
+            else System.out.println("2. Tails");
+            if (choice == result) {
+                System.out.println("Added money: " + money);
+                player.addMoney(money);
+            } else {
+                System.out.println("Lost money: " + money);
+                player.addMoney(-money);
+            }
+        }
+        else coinFlipGame(player);
 
     }
 }
