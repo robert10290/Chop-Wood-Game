@@ -48,4 +48,8 @@ public class Shop {
 
 
     }
+
+    public static void openGui(Player player) {
+
+    }
 }

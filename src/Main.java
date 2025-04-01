@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.util.Scanner;
 
 public class Main {
@@ -7,8 +8,17 @@ public class Main {
         System.out.println("Hello in da Game!");
         System.out.println("Name of a player:");
         Scanner scanner = new Scanner(System.in);
-        String name = scanner.nextLine();
+        //String name = scanner.nextLine();
+        String name = "Robert";
         Player player = new Player(name);
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new Gui(player);
+            }
+        });
+
         if(!player.getName().isEmpty()) System.out.println("Hello "+player.getName());
         String action="";
         while(!action.equalsIgnoreCase("quit")) {

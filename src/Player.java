@@ -120,14 +120,19 @@ public class Player {
         return wood;
     }
 
-    public void sellWood() {
+    public int sellWood() {
         if ((getWoodAmount() / 10) > 0) {
             int soldAmountOfWood = (getWoodAmount() / 10) * 10;
             int addedMoney = (getWoodAmount() / 10);
             money += addedMoney;
             woodAmount = getWoodAmount() % 10;
             System.out.println("Sold " + soldAmountOfWood + " wood. Added money: " + addedMoney);
-        } else System.out.println("Cannot sell wood.");
+            return soldAmountOfWood;
+        } else {
+            System.out.println("Cannot sell wood.");
+            return -1;
+        }
+
     }
 
     public void addItemToEquipment(Item item) {
@@ -146,20 +151,23 @@ public class Player {
 
     }
 
+    //this method will be brought to another class
     public void coinFlipGame(Player player) {
         Random random = new Random();
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Type money amount: ");
         int money = scanner.nextInt();
-        if (String.valueOf(money).equalsIgnoreCase("0")) return;
+        if (String.valueOf(money).equalsIgnoreCase("0") || player.money==0) {
+            return;
+        }
         else if (money > 0 && money <= player.money) {
             System.out.println("Please take your choice:");
             System.out.println("1. Heads");
             System.out.println("2. Tails");
             int choice = scanner.nextInt();
             int result = Math.abs(random.nextInt() % 2) + 1;
-            System.out.println("Coinflip result:");
+            System.out.print("Coinflip result: ");
             if(result==1) System.out.println("1. Heads");
             else System.out.println("2. Tails");
             if (choice == result) {
