@@ -1,22 +1,23 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class Gui {
     JLabel message;
+    DefaultTableModel shopTableModel;
+    ArrayList<String> idOfItems = new ArrayList<>();
 
     Gui(Player player) {
-        JFrame jfrm = new JFrame("Game");
+        JFrame jFrame = new JFrame("Chop Wood Game");
 
 
-        //jfrm.setLayout(new FlowLayout());
-        jfrm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        jfrm.setLayout(new BoxLayout(jfrm.getContentPane(), BoxLayout.Y_AXIS));
+        jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        jFrame.setLayout(new BoxLayout(jFrame.getContentPane(), BoxLayout.Y_AXIS));
 
 
-        jfrm.setSize(600,600);
-        jfrm.setLocationRelativeTo(null);
+        jFrame.setSize(600, 600);
+        jFrame.setLocationRelativeTo(null);
 
 
         JLabel playerInfo = new JLabel(updatePlayerInfo(player));
@@ -25,49 +26,127 @@ public class Gui {
         chopWood.setAlignmentX(Component.CENTER_ALIGNMENT);
         JButton sellWood = new JButton("Sell wood");
         sellWood.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JButton shop = new JButton("Shop");
+        shop.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JButton equipment = new JButton("Show equipment");
+        equipment.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JButton coinThrow = new JButton("Coin Throw Game");
+        coinThrow.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         chopWood.addActionListener(e -> {
-            int woodGot=player.makeWood();
+            int woodGot = player.makeWood();
             playerInfo.setText(updatePlayerInfo(player));
-            message.setText("You got "+woodGot+" wood.");
+            message.setText("You got " + woodGot + " wood.");
         });
 
         sellWood.addActionListener(e -> {
             int soldWood = player.sellWood();
-            if(soldWood!=-1) {
+            if (soldWood != -1) {
                 playerInfo.setText(updatePlayerInfo(player));
-                message.setText("Sold "+soldWood+" wood. Added money: "+(soldWood/10));
-            }
-            else {
+                message.setText("Sold " + soldWood + " wood. Added money: " + (soldWood / 10));
+            } else {
                 message.setText("Cannot sell wood.");
             }
         });
 
-        jfrm.add(Box.createRigidArea(new Dimension(600, 10)));
-        jfrm.add(playerInfo);
-        jfrm.add(Box.createRigidArea(new Dimension(600, 10)));
-        jfrm.add(chopWood);
-        jfrm.add(Box.createRigidArea(new Dimension(600, 10)));
-        jfrm.add(sellWood);
-        jfrm.add(Box.createRigidArea(new Dimension(600, 10)));
+        shop.addActionListener(e -> {
+            //TODO: Make action listener for SHOP
+            JFrame shopFrame = new JFrame("Shop");
+            shopFrame.setLayout(new BoxLayout(shopFrame.getContentPane(), BoxLayout.Y_AXIS));
 
-        message=new JLabel("");
+            shopTableModel = createShopTableModel(player);
+
+            JTable bee = new JTable(shopTableModel) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+            JScrollPane scrollPane = new JScrollPane(bee);
+            JButton buy = new JButton("Buy");
+            bee.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+
+            buy.addActionListener(e1 -> {
+                //TODO: add a action listener to BUY button
+                if (bee.getSelectedRow() != -1) {
+                    String itemId = idOfItems.get(bee.getSelectedRow());
+                    //JOptionPane.showConfirmDialog(shopFrame, itemId);
+                    String itemBuy = "Buy " + Items.getItem(itemId).getNameItem() + "?";
+                    if (JOptionPane.showConfirmDialog(shopFrame, itemBuy, "Shop", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                        Shop.buyItem(itemId, player);
+                        playerInfo.setText(updatePlayerInfo(player));
+                        shopTableModel = createShopTableModel(player);
+                        shopFrame.dispose();
+                        shop.doClick();
+                    }
+
+                } else JOptionPane.showMessageDialog(shopFrame, "Choose item first!");
+            });
+
+
+            shopFrame.add(scrollPane);
+            buy.setAlignmentX(Component.CENTER_ALIGNMENT);
+            shopFrame.add(buy);
+
+
+            shopFrame.setSize(300, 300);
+            shopFrame.setLocationRelativeTo(jFrame);
+
+            shopFrame.setVisible(true);
+        });
+
+        equipment.addActionListener(e -> {
+            //TODO: Make action listener for EQUIPMENT
+        });
+
+        coinThrow.addActionListener(e -> {
+            //TODO: Make action listener for COIN THROW
+        });
+
+        jFrame.add(Box.createRigidArea(new Dimension(600, 10)));
+        jFrame.add(playerInfo);
+        jFrame.add(Box.createRigidArea(new Dimension(600, 10)));
+        jFrame.add(chopWood);
+        jFrame.add(Box.createRigidArea(new Dimension(600, 10)));
+        jFrame.add(sellWood);
+        jFrame.add(Box.createRigidArea(new Dimension(600, 10)));
+        jFrame.add(shop);
+        jFrame.add(Box.createRigidArea(new Dimension(600, 10)));
+        jFrame.add(equipment);
+        jFrame.add(Box.createRigidArea(new Dimension(600, 10)));
+        jFrame.add(coinThrow);
+        jFrame.add(Box.createRigidArea(new Dimension(600, 10)));
+
+        message = new JLabel("");
         message.setAlignmentX(Component.CENTER_ALIGNMENT);
-        jfrm.add(message);
-        //jfrm.pack();
-        jfrm.setVisible(true);
+        jFrame.add(message);
+        jFrame.setVisible(true);
     }
 
     private String updatePlayerInfo(Player player) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Level: "+player.getLevel());
-        stringBuilder.append(", Wood: "+player.getWoodAmount());
-        stringBuilder.append(", Money: "+player.getMoney());
-        stringBuilder.append(", Power: "+player.getPower());
-        stringBuilder.append(", Exp: "+player.getExperience());
-
-        return stringBuilder.toString();
+        return "Level: " + player.getLevel() +
+                ", Wood: " + player.getWoodAmount() +
+                ", Money: " + player.getMoney() +
+                ", Power: " + player.getPower() +
+                ", Exp: " + player.getExperience();
     }
 
-    //private JButton createJButton(String text,)
+    private DefaultTableModel createShopTableModel(Player player) {
+        String[] column = {"Name", "Power bonus", "Cost"};
+        shopTableModel = new DefaultTableModel(null, column);
+        idOfItems.clear();
+        for (int i = 0; i < Items.itemsSize(); i++) {
+            String itemId = Items.getItem(Items.getItemId(i)).getNameId();
+            String name = Items.getItem(Items.getItemId(i)).getNameItem();
+            int powerBonus = Items.getItem(Items.getItemId(i)).getPower();
+            int cost = Items.getItem(Items.getItemId(i)).getPrice();
+            if (!player.findItem(itemId)) {
+                shopTableModel.addRow(new String[]{name, String.valueOf(powerBonus), String.valueOf(cost)});
+                idOfItems.add(itemId);
+            }
+        }
+        return shopTableModel;
+    }
+
 }
