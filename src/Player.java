@@ -7,7 +7,7 @@ public class Player {
     private int experience;
     private int level;
     private int money;
-    private List<Item> equipment;
+    private final List<Item> equipment;
 
     Player(String name) {
         setName(name);
@@ -137,6 +137,10 @@ public class Player {
 
     public void addItemToEquipment(Item item) {
         equipment.add(item);
+    }
+
+    public List<Item> getEquipment() {
+        return equipment;
     }
 
     public boolean findItem(String nameId) {

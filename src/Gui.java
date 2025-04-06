@@ -3,12 +3,15 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class Gui {
     JLabel message;
-    DefaultTableModel shopTableModel;
+    DefaultTableModel tableModel;
     ArrayList<String> idOfItems = new ArrayList<>();
 
     Gui(Player player) {
@@ -32,9 +35,9 @@ public class Gui {
         sellWood.setAlignmentX(Component.CENTER_ALIGNMENT);
         JButton shop = new JButton("[3] Shop");
         shop.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JButton equipment = new JButton("Show equipment");
+        JButton equipment = new JButton("[4] Show equipment");
         equipment.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JButton coinThrow = new JButton("Coin Throw Game");
+        JButton coinThrow = new JButton("[5] Coin Throw Game");
         coinThrow.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         chopWood.addActionListener(e -> {
@@ -60,29 +63,29 @@ public class Gui {
             shopFrame.setLayout(new BoxLayout(shopFrame.getContentPane(), BoxLayout.Y_AXIS));
             shopFrame.setFocusable(true);
 
-            shopTableModel = createShopTableModel(player);
+            tableModel = createShopTableModel(player);
 
-            JTable bee = new JTable(shopTableModel) {
+            JTable table = new JTable(tableModel) {
                 @Override
                 public boolean isCellEditable(int row, int column) {
                     return false;
                 }
             };
-            JScrollPane scrollPane = new JScrollPane(bee);
+            JScrollPane scrollPane = new JScrollPane(table);
             JButton buy = new JButton("Buy");
-            bee.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 
             buy.addActionListener(e1 -> {
                 //TODO: add a action listener to BUY button
-                if (bee.getSelectedRow() != -1) {
-                    String itemId = idOfItems.get(bee.getSelectedRow());
+                if (table.getSelectedRow() != -1) {
+                    String itemId = idOfItems.get(table.getSelectedRow());
                     //JOptionPane.showConfirmDialog(shopFrame, itemId);
                     String itemBuy = "Buy " + Items.getItem(itemId).getNameItem() + "?";
                     if (JOptionPane.showConfirmDialog(shopFrame, itemBuy, "Shop", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                         Shop.buyItem(itemId, player);
                         playerInfo.setText(updatePlayerInfo(player));
-                        shopTableModel = createShopTableModel(player);
+                        tableModel = createShopTableModel(player);
                         shopFrame.dispose();
                         shop.doClick();
                     }
@@ -90,7 +93,7 @@ public class Gui {
                 } else JOptionPane.showMessageDialog(shopFrame, "Choose item first!");
             });
 
-            bee.addKeyListener(new KeyAdapter() {
+            table.addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyPressed(KeyEvent e) {
                     if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -102,14 +105,16 @@ public class Gui {
             shopFrame.addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyPressed(KeyEvent e) {
-                    if ((e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_UP) && bee.getSelectedRow() == -1 && bee.getRowCount()>0) {
-                        bee.setRowSelectionInterval(0, 0);
-                    } else if (e.getKeyCode() == KeyEvent.VK_DOWN && bee.getSelectedRow() < bee.getRowCount() - 1) {
-                        bee.setRowSelectionInterval(bee.getSelectedRow() + 1, bee.getSelectedRow() + 1);
-                    } else if (e.getKeyCode() == KeyEvent.VK_UP && bee.getSelectedRow() > 0) {
-                        bee.setRowSelectionInterval(bee.getSelectedRow() - 1, bee.getSelectedRow() - 1);
+                    if ((e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_UP) && table.getSelectedRow() == -1 && table.getRowCount() > 0) {
+                        table.setRowSelectionInterval(0, 0);
+                    } else if (e.getKeyCode() == KeyEvent.VK_DOWN && table.getSelectedRow() < table.getRowCount() - 1) {
+                        table.setRowSelectionInterval(table.getSelectedRow() + 1, table.getSelectedRow() + 1);
+                    } else if (e.getKeyCode() == KeyEvent.VK_UP && table.getSelectedRow() > 0) {
+                        table.setRowSelectionInterval(table.getSelectedRow() - 1, table.getSelectedRow() - 1);
                     } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                         buy.doClick();
+                    } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                        shopFrame.dispose();
                     }
                 }
             });
@@ -124,14 +129,59 @@ public class Gui {
             shopFrame.setLocationRelativeTo(jFrame);
 
             shopFrame.setVisible(true);
+
+            shopFrame.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    jFrame.requestFocus();
+                }
+            });
         });
 
         equipment.addActionListener(e -> {
             //TODO: Make action listener for EQUIPMENT
+            if (player.getEquipment().isEmpty()) {
+                JOptionPane.showMessageDialog(jFrame, "Equipment empty");
+                jFrame.requestFocus();
+                return;
+            }
+            JFrame equipmentFrame = new JFrame("Equipment");
+            equipmentFrame.setLayout(new BoxLayout(equipmentFrame.getContentPane(), BoxLayout.Y_AXIS));
+            equipmentFrame.setFocusable(true);
+            tableModel = createEquipmentTableModel(player);
+
+            JTable bee = new JTable(tableModel) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+
+            JScrollPane scrollPane = new JScrollPane(bee);
+            bee.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            //scrollPane.add(bee);
+            equipmentFrame.add(scrollPane);
+            equipmentFrame.setSize(300, 300);
+            equipmentFrame.setLocationRelativeTo(jFrame);
+            equipmentFrame.setVisible(true);
+
+            equipmentFrame.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    jFrame.requestFocus();
+                }
+            });
+
+
         });
+
 
         coinThrow.addActionListener(e -> {
             //TODO: Make action listener for COIN THROW
+            JDialog jDialog = new JDialog(jFrame);
+            jDialog.setSize(300, 300);
+
+
         });
 
         jFrame.add(Box.createRigidArea(new Dimension(600, 10)));
@@ -157,13 +207,21 @@ public class Gui {
                     sellWood.doClick();
                 } else if (e.getKeyCode() == KeyEvent.VK_3) {
                     shop.doClick();
+                } else if (e.getKeyCode() == KeyEvent.VK_4) {
+                    equipment.doClick();
+                } else if (e.getKeyCode() == KeyEvent.VK_5) {
+                    coinThrow.doClick();
+                } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    System.exit(0);
                 }
             }
         });
 
         message = new JLabel("");
+        JLabel debug = new JLabel(Arrays.toString(jFrame.getKeyListeners()));
         message.setAlignmentX(Component.CENTER_ALIGNMENT);
         jFrame.add(message);
+        jFrame.add(debug);
         jFrame.setVisible(true);
     }
 
@@ -177,7 +235,7 @@ public class Gui {
 
     private DefaultTableModel createShopTableModel(Player player) {
         String[] column = {"Name", "Power bonus", "Cost"};
-        shopTableModel = new DefaultTableModel(null, column);
+        tableModel = new DefaultTableModel(null, column);
         idOfItems.clear();
         for (int i = 0; i < Items.itemsSize(); i++) {
             String itemId = Items.getItem(Items.getItemId(i)).getNameId();
@@ -185,11 +243,26 @@ public class Gui {
             int powerBonus = Items.getItem(Items.getItemId(i)).getPower();
             int cost = Items.getItem(Items.getItemId(i)).getPrice();
             if (!player.findItem(itemId)) {
-                shopTableModel.addRow(new String[]{name, String.valueOf(powerBonus), String.valueOf(cost)});
+                tableModel.addRow(new String[]{name, String.valueOf(powerBonus), String.valueOf(cost)});
                 idOfItems.add(itemId);
             }
         }
-        return shopTableModel;
+        return tableModel;
+    }
+
+    private DefaultTableModel createEquipmentTableModel(Player player) {
+        String[] column = {"Name", "Power bonus"};
+        tableModel = new DefaultTableModel(null, column);
+        ArrayList<Item> eq = (ArrayList<Item>) player.getEquipment();
+        idOfItems.clear();
+        for (int i = 0; i < eq.size(); i++) {
+            String itemId = eq.get(i).getNameId();
+            String name = eq.get(i).getNameItem();
+            int powerBonus = eq.get(i).getPower();
+            tableModel.addRow(new String[]{name, String.valueOf(powerBonus)});
+            idOfItems.add(itemId);
+        }
+        return tableModel;
     }
 
 

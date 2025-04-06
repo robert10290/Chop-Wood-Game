@@ -9,7 +9,7 @@ public class Main {
         System.out.println("Name of a player:");
         Scanner scanner = new Scanner(System.in);
         //String name = scanner.nextLine();
-        String name = "Robert";
+        String name = "namae";
         Player player = new Player(name);
 
         SwingUtilities.invokeLater(new Runnable() {
