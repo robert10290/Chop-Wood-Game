@@ -1,7 +1,10 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+
 
 public class Gui {
     JLabel message;
@@ -12,6 +15,7 @@ public class Gui {
         JFrame jFrame = new JFrame("Chop Wood Game");
 
 
+        jFrame.setFocusable(true);
         jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         jFrame.setLayout(new BoxLayout(jFrame.getContentPane(), BoxLayout.Y_AXIS));
 
@@ -22,11 +26,11 @@ public class Gui {
 
         JLabel playerInfo = new JLabel(updatePlayerInfo(player));
         playerInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JButton chopWood = new JButton("Get wood");
+        JButton chopWood = new JButton("[1] Get wood");
         chopWood.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JButton sellWood = new JButton("Sell wood");
+        JButton sellWood = new JButton("[2] Sell wood");
         sellWood.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JButton shop = new JButton("Shop");
+        JButton shop = new JButton("[3] Shop");
         shop.setAlignmentX(Component.CENTER_ALIGNMENT);
         JButton equipment = new JButton("Show equipment");
         equipment.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -38,6 +42,7 @@ public class Gui {
             playerInfo.setText(updatePlayerInfo(player));
             message.setText("You got " + woodGot + " wood.");
         });
+
 
         sellWood.addActionListener(e -> {
             int soldWood = player.sellWood();
@@ -53,6 +58,7 @@ public class Gui {
             //TODO: Make action listener for SHOP
             JFrame shopFrame = new JFrame("Shop");
             shopFrame.setLayout(new BoxLayout(shopFrame.getContentPane(), BoxLayout.Y_AXIS));
+            shopFrame.setFocusable(true);
 
             shopTableModel = createShopTableModel(player);
 
@@ -82,6 +88,30 @@ public class Gui {
                     }
 
                 } else JOptionPane.showMessageDialog(shopFrame, "Choose item first!");
+            });
+
+            bee.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                        buy.doClick();
+                    }
+                }
+            });
+
+            shopFrame.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if ((e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_UP) && bee.getSelectedRow() == -1 && bee.getRowCount()>0) {
+                        bee.setRowSelectionInterval(0, 0);
+                    } else if (e.getKeyCode() == KeyEvent.VK_DOWN && bee.getSelectedRow() < bee.getRowCount() - 1) {
+                        bee.setRowSelectionInterval(bee.getSelectedRow() + 1, bee.getSelectedRow() + 1);
+                    } else if (e.getKeyCode() == KeyEvent.VK_UP && bee.getSelectedRow() > 0) {
+                        bee.setRowSelectionInterval(bee.getSelectedRow() - 1, bee.getSelectedRow() - 1);
+                    } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                        buy.doClick();
+                    }
+                }
             });
 
 
@@ -118,6 +148,19 @@ public class Gui {
         jFrame.add(coinThrow);
         jFrame.add(Box.createRigidArea(new Dimension(600, 10)));
 
+        jFrame.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_1) {
+                    chopWood.doClick();
+                } else if (e.getKeyCode() == KeyEvent.VK_2) {
+                    sellWood.doClick();
+                } else if (e.getKeyCode() == KeyEvent.VK_3) {
+                    shop.doClick();
+                }
+            }
+        });
+
         message = new JLabel("");
         message.setAlignmentX(Component.CENTER_ALIGNMENT);
         jFrame.add(message);
@@ -148,5 +191,6 @@ public class Gui {
         }
         return shopTableModel;
     }
+
 
 }
