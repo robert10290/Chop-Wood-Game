@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class Gui {
@@ -178,8 +177,47 @@ public class Gui {
 
         coinThrow.addActionListener(e -> {
             //TODO: Make action listener for COIN THROW
-            JDialog jDialog = new JDialog(jFrame);
-            jDialog.setSize(300, 300);
+            try {
+                Object[] options = {"Heads", "Tails", "Quit"};
+                String ret = JOptionPane.showInputDialog(
+                        jFrame,
+                        "Enter the amount of money you want to bet",
+                        "Casino",
+                        JOptionPane.INFORMATION_MESSAGE,
+                        null,
+                        null,
+                        null).toString();
+                int moneyBet = Integer.parseInt(ret);
+                int choice;
+                if(moneyBet>0 && moneyBet<=player.getMoney()) {
+                    choice = JOptionPane.showOptionDialog(
+                            jFrame,
+                            "Heads or Tails?",
+                            "Choose",
+                            JOptionPane.YES_NO_CANCEL_OPTION,
+                            JOptionPane.PLAIN_MESSAGE,
+                            null,
+                            options,
+                            null);
+                    int resultOfFlip = Casino.coinflip();
+                    if(resultOfFlip == choice && choice!=2) {
+                        JOptionPane.showMessageDialog(jFrame, "You've won money.");
+                        player.addMoney(moneyBet);
+                        playerInfo.setText(updatePlayerInfo(player));
+                    }
+                    else if(choice!=2){
+                        JOptionPane.showMessageDialog(jFrame, "You've lost money.");
+                        player.addMoney(-moneyBet);
+                        playerInfo.setText(updatePlayerInfo(player));
+                    }
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(jFrame, "Not valid value");
+            } catch (NullPointerException ignored) {
+
+            }
+            jFrame.requestFocus();
+
 
 
         });
@@ -218,10 +256,8 @@ public class Gui {
         });
 
         message = new JLabel("");
-        JLabel debug = new JLabel(Arrays.toString(jFrame.getKeyListeners()));
         message.setAlignmentX(Component.CENTER_ALIGNMENT);
         jFrame.add(message);
-        jFrame.add(debug);
         jFrame.setVisible(true);
     }
 
@@ -255,10 +291,10 @@ public class Gui {
         tableModel = new DefaultTableModel(null, column);
         ArrayList<Item> eq = (ArrayList<Item>) player.getEquipment();
         idOfItems.clear();
-        for (int i = 0; i < eq.size(); i++) {
-            String itemId = eq.get(i).getNameId();
-            String name = eq.get(i).getNameItem();
-            int powerBonus = eq.get(i).getPower();
+        for (Item item : eq) {
+            String itemId = item.getNameId();
+            String name = item.getNameItem();
+            int powerBonus = item.getPower();
             tableModel.addRow(new String[]{name, String.valueOf(powerBonus)});
             idOfItems.add(itemId);
         }
