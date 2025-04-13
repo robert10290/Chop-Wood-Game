@@ -109,7 +109,6 @@ public class Player {
 
     public int makeWood() {
         Random random = new Random();
-        //int wood = (int)(Math.*(level+1)*getPower());
         int wood = (int) ((random.nextInt(2)) + (0.5 * random.nextInt(level + power)));
         if (wood > 0) {
             int gainedExp = (int) (Math.random() * 20 + wood);
@@ -146,7 +145,6 @@ public class Player {
     public boolean findItem(String nameId) {
         if (equipment.isEmpty()) return false;
         Iterator<Item> itemIterator = equipment.iterator();
-        String itemId;
         do {
             if (itemIterator.next().getNameId().equalsIgnoreCase(nameId)) return true;
         }

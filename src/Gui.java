@@ -43,6 +43,7 @@ public class Gui {
             int woodGot = player.makeWood();
             playerInfo.setText(updatePlayerInfo(player));
             message.setText("You got " + woodGot + " wood.");
+            jFrame.requestFocus();
         });
 
 
@@ -54,10 +55,10 @@ public class Gui {
             } else {
                 message.setText("Cannot sell wood.");
             }
+            jFrame.requestFocus();
         });
 
         shop.addActionListener(e -> {
-            //TODO: Make action listener for SHOP
             JFrame shopFrame = new JFrame("Shop");
             shopFrame.setLayout(new BoxLayout(shopFrame.getContentPane(), BoxLayout.Y_AXIS));
             shopFrame.setFocusable(true);
@@ -76,10 +77,8 @@ public class Gui {
 
 
             buy.addActionListener(e1 -> {
-                //TODO: add a action listener to BUY button
                 if (table.getSelectedRow() != -1) {
                     String itemId = idOfItems.get(table.getSelectedRow());
-                    //JOptionPane.showConfirmDialog(shopFrame, itemId);
                     String itemBuy = "Buy " + Items.getItem(itemId).getNameItem() + "?";
                     if (JOptionPane.showConfirmDialog(shopFrame, itemBuy, "Shop", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                         Shop.buyItem(itemId, player);
@@ -88,7 +87,6 @@ public class Gui {
                         shopFrame.dispose();
                         shop.doClick();
                     }
-
                 } else JOptionPane.showMessageDialog(shopFrame, "Choose item first!");
             });
 
@@ -138,7 +136,6 @@ public class Gui {
         });
 
         equipment.addActionListener(e -> {
-            //TODO: Make action listener for EQUIPMENT
             if (player.getEquipment().isEmpty()) {
                 JOptionPane.showMessageDialog(jFrame, "Equipment empty");
                 jFrame.requestFocus();
@@ -176,7 +173,6 @@ public class Gui {
 
 
         coinThrow.addActionListener(e -> {
-            //TODO: Make action listener for COIN THROW
             try {
                 Object[] options = {"Heads", "Tails", "Quit"};
                 String ret = JOptionPane.showInputDialog(
