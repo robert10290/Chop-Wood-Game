@@ -19,21 +19,6 @@ public class Player {
         equipment = new ArrayList<>();
     }
 
-    public void showEquipment() {
-        if (equipment.isEmpty()) System.out.println("Equipment: [empty]");
-        else {
-            Iterator<Item> itemIterator = equipment.iterator();
-            System.out.print("Equipment: [ ");
-            do {
-                System.out.print(itemIterator.next().getNameItem());
-                if (itemIterator.hasNext()) System.out.print(", ");
-            }
-            while (itemIterator.hasNext());
-            System.out.println(" ]");
-        }
-
-    }
-
     public int getLevel() {
         return level;
     }
@@ -77,10 +62,6 @@ public class Player {
 
     public void setPower(int power) {
         this.power = power;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void setName(String name) {
@@ -150,37 +131,6 @@ public class Player {
         }
         while (itemIterator.hasNext());
         return false;
-
-    }
-
-    //this method will be brought to another class
-    public void coinFlipGame(Player player) {
-        Random random = new Random();
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Type money amount: ");
-        int money = scanner.nextInt();
-        if (String.valueOf(money).equalsIgnoreCase("0") || player.money==0) {
-            return;
-        }
-        else if (money > 0 && money <= player.money) {
-            System.out.println("Please take your choice:");
-            System.out.println("1. Heads");
-            System.out.println("2. Tails");
-            int choice = scanner.nextInt();
-            int result = Math.abs(random.nextInt() % 2) + 1;
-            System.out.print("Coinflip result: ");
-            if(result==1) System.out.println("1. Heads");
-            else System.out.println("2. Tails");
-            if (choice == result) {
-                System.out.println("Added money: " + money);
-                player.addMoney(money);
-            } else {
-                System.out.println("Lost money: " + money);
-                player.addMoney(-money);
-            }
-        }
-        else coinFlipGame(player);
 
     }
 }
